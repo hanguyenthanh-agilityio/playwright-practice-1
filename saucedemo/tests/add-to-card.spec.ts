@@ -49,5 +49,4 @@ test.describe('Verify Add To Cart', () => {
     await inventory.addFirstProduct();
     await expect(inventory.cartBadge).toHaveText('1');
   });
-
 });

@@ -114,5 +114,4 @@ test.describe('Verify Checkout', () => {
     await expect(page.locator('[data-test="error"]'))
       .toHaveText('Error: First Name is required');
   });
-
 });

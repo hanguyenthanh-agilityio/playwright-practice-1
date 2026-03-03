@@ -49,5 +49,4 @@ test.describe('Verify Sort Dropdown', () => {
     const sorted = [...prices].sort((a, b) => b - a);
     expect(prices).toEqual(sorted);
   });
-
 });

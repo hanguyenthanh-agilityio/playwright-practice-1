@@ -62,5 +62,4 @@ test.describe('Login Feature - SauceDemo', () => {
 
     await login.expectError('Username is required');
   });
-
 });
