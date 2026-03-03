@@ -1,61 +1,53 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures/auth.fixture';
+import { InventoryPage } from '../pages/inventory.page';
 
 test.describe('Verify Sort Dropdown', () => {
 
-  const baseURL = 'https://www.saucedemo.com/';
-  const username = 'standard_user';
-  const password = 'secret_sauce';
-
-  test.beforeEach(async ({ page }) => {
-    await page.goto(baseURL);
-    await page.getByPlaceholder('Username').fill(username);
-    await page.getByPlaceholder('Password').fill(password);
-    await page.getByRole('button', { name: 'Login' }).click();
-    await expect(page).toHaveURL(/inventory/);
-  });
-
   test('User can display sort dropdown options', async ({ page }) => {
-    const dropdown = page.locator('.product_sort_container');
-    await expect(dropdown).toBeVisible();
+    const inventory = new InventoryPage(page);
 
-    const options = await dropdown.locator('option').allTextContents();
+    const options = await inventory.sortOptions();
     expect(options.length).toBeGreaterThan(0);
   });
 
   test('Sort by Name (A to Z)', async ({ page }) => {
-    await page.locator('.product_sort_container').selectOption('az');
+    const inventory = new InventoryPage(page);
 
-    const names = await page.locator('.inventory_item_name').allTextContents();
+    await inventory.sortBy('az');
+    const names = await inventory.getProductNames();
+
     const sorted = [...names].sort();
     expect(names).toEqual(sorted);
   });
 
   test('Sort by Name (Z to A)', async ({ page }) => {
-    await page.locator('.product_sort_container').selectOption('za');
+    const inventory = new InventoryPage(page);
 
-    const names = await page.locator('.inventory_item_name').allTextContents();
+    await inventory.sortBy('za');
+    const names = await inventory.getProductNames();
+
     const sorted = [...names].sort().reverse();
     expect(names).toEqual(sorted);
   });
 
   test('Sort by Price (low to high)', async ({ page }) => {
-    await page.locator('.product_sort_container').selectOption('lohi');
+    const inventory = new InventoryPage(page);
 
-    const prices = await page.locator('.inventory_item_price').allTextContents();
-    const nums = prices.map(p => parseFloat(p.replace('$', '')));
-    const sorted = [...nums].sort((a, b) => a - b);
+    await inventory.sortBy('lohi');
+    const prices = await inventory.getProductPrices();
 
-    expect(nums).toEqual(sorted);
+    const sorted = [...prices].sort((a, b) => a - b);
+    expect(prices).toEqual(sorted);
   });
 
   test('Sort by Price (high to low)', async ({ page }) => {
-    await page.locator('.product_sort_container').selectOption('hilo');
+    const inventory = new InventoryPage(page);
 
-    const prices = await page.locator('.inventory_item_price').allTextContents();
-    const nums = prices.map(p => parseFloat(p.replace('$', '')));
-    const sorted = [...nums].sort((a, b) => b - a);
+    await inventory.sortBy('hilo');
+    const prices = await inventory.getProductPrices();
 
-    expect(nums).toEqual(sorted);
+    const sorted = [...prices].sort((a, b) => b - a);
+    expect(prices).toEqual(sorted);
   });
 
 });
