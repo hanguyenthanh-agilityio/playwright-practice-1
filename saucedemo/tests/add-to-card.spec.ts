@@ -1,52 +1,107 @@
-import { test, expect } from '../fixtures/auth.fixture';
-import { InventoryPage } from '../pages/inventory.page';
+import { test, expect } from "../fixtures/auth.fixture";
+import { InventoryPage } from "../pages/inventory.page";
+import { CartPage } from "../pages/cart.page";
 
-test.describe('Verify Add To Cart', () => {
-
-  test('Add single product', async ({ page }) => {
+test.describe("Verify Add To Cart - Full Validation", () => {
+  test("Add single product and verify details in cart", async ({ page }) => {
     const inventory = new InventoryPage(page);
+    const cart = new CartPage(page);
+
+    const product = await inventory.getProductInfo(0);
 
     await inventory.addFirstProduct();
-    await expect(inventory.cartBadge).toHaveText('1');
+    await inventory.expectCartBadgeCount(1);
+
+    await inventory.goToCart();
+
+    await cart.expectItemCount(1);
+    await cart.expectItemPresent(product.name);
+    await cart.expectItemPrice(product.name, product.price);
   });
 
-  test('Add multiple products', async ({ page }) => {
+  test("Add multiple products and verify details", async ({ page }) => {
     const inventory = new InventoryPage(page);
+    const cart = new CartPage(page);
+
+    const product1 = await inventory.getProductInfo(0);
+    const product2 = await inventory.getProductInfo(1);
 
     await inventory.addMultiple(2);
-    await expect(inventory.cartBadge).toHaveText('2');
+    await inventory.expectCartBadgeCount(2);
+
+    await inventory.goToCart();
+
+    await cart.expectItemCount(2);
+
+    await cart.expectItemPresent(product1.name);
+    await cart.expectItemPresent(product2.name);
+
+    await cart.expectItemPrice(product1.name, product1.price);
+    await cart.expectItemPrice(product2.name, product2.price);
   });
 
-  test('Button changes to Remove after adding', async ({ page }) => {
+  test("Button changes to Remove after adding product", async ({ page }) => {
     const inventory = new InventoryPage(page);
 
-    await inventory.addSpecific('add-to-cart-sauce-labs-bike-light');
-    await expect(page.locator('[data-test="remove-sauce-labs-bike-light"]')).toBeVisible();
+    const product = await inventory.getProductInfo(0);
+
+    await inventory.addFirstProduct();
+    await inventory.expectCartBadgeCount(1);
+
+    const item = page.locator(".inventory_item").filter({
+      has: page.locator(".inventory_item_name", {
+        hasText: product.name,
+      }),
+    });
+
+    await expect(
+      item.getByRole("button", { name: "Remove" })
+    ).toBeVisible();
   });
 
-  test('Remove product from inventory page', async ({ page }) => {
+  test("Remove product from inventory page", async ({ page }) => {
     const inventory = new InventoryPage(page);
 
     await inventory.addFirstProduct();
-    await inventory.removeFirstProduct();
+    await inventory.expectCartBadgeCount(1);
 
-    await expect(inventory.cartBadge).toHaveCount(0);
+    await inventory.removeFirstProduct();
+    await inventory.expectCartBadgeCount(0);
   });
 
-  test('Remove product from cart page', async ({ page }) => {
+  test("Remove product from cart page", async ({ page }) => {
     const inventory = new InventoryPage(page);
+    const cart = new CartPage(page);
+
+    const product = await inventory.getProductInfo(0);
 
     await inventory.addFirstProduct();
     await inventory.goToCart();
 
-    await page.getByRole('button', { name: 'Remove' }).click();
-    await expect(page.locator('.cart_item')).toHaveCount(0);
+    await cart.expectItemPresent(product.name);
+
+    await cart.removeItemByName(product.name);
+
+    await cart.expectItemNotPresent(product.name);
+    await cart.expectItemCount(0);
   });
 
-  test('User cannot add same product twice', async ({ page }) => {
+  test("User cannot add same product twice", async ({ page }) => {
     const inventory = new InventoryPage(page);
 
+    const product = await inventory.getProductInfo(0);
+
     await inventory.addFirstProduct();
-    await expect(inventory.cartBadge).toHaveText('1');
+    await inventory.expectCartBadgeCount(1);
+
+    const item = page.locator(".inventory_item").filter({
+      has: page.locator(".inventory_item_name", {
+        hasText: product.name,
+      }),
+    });
+
+    await expect(
+      item.getByRole("button", { name: "Add to cart" })
+    ).toHaveCount(0);
   });
 });

@@ -3,10 +3,10 @@ import { LoginPage } from '../pages/login.page';
 
 export const test = base.extend({
   page: async ({ page }, use) => {
-    const login = new LoginPage(page);
+    const loginPage = new LoginPage(page);
 
-    await login.goto();
-    await login.login('standard_user', 'secret_sauce');
+    await loginPage.goto();
+    await loginPage                                                                                                                                                                                                                                              .login('standard_user', 'secret_sauce');
 
     await expect(page).toHaveURL(/inventory/);
     await expect(page.getByText('Products')).toBeVisible();

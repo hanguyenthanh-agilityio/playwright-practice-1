@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator } from "@playwright/test";
 
 export class HamburgerMenu {
   readonly page: Page;
@@ -13,13 +13,15 @@ export class HamburgerMenu {
   constructor(page: Page) {
     this.page = page;
 
-    this.openMenuButton = page.locator('#react-burger-menu-btn');
-    this.closeMenuButton = page.locator('#react-burger-cross-btn');
+    this.openMenuButton = page.getByRole("button", { name: "Open Menu" });
+    this.closeMenuButton = page.getByRole("button", { name: "Close Menu" });
 
-    this.allItemsLink = page.locator('#inventory_sidebar_link');
-    this.aboutLink = page.locator('#about_sidebar_link');
-    this.logoutLink = page.locator('#logout_sidebar_link');
-    this.resetAppStateLink = page.locator('#reset_sidebar_link');
+    this.allItemsLink = page.getByRole("link", { name: "All Items" });
+    this.aboutLink = page.getByRole("link", { name: "About" });
+    this.logoutLink = page.getByRole("link", { name: "Logout" });
+    this.resetAppStateLink = page.getByRole("link", {
+      name: "Reset App State",
+    });
   }
 
   async open() {
