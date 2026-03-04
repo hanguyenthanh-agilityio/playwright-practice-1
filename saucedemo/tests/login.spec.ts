@@ -1,90 +1,68 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
+import { LoginPage } from "../pages/login.page";
 
-test.describe('Login Feature - SauceDemo', () => {
-
-  // Test data
-  const baseURL = 'https://www.saucedemo.com/';
-  const validUsername = 'standard_user';
-  const validPassword = 'secret_sauce';
-  const invalidUsername = 'wrong_user';
-  const invalidPassword = 'wrong_password';
+test.describe("Login Feature - SauceDemo", () => {
+  const validUsername = "standard_user";
+  const validPassword = "secret_sauce";
 
   test.beforeEach(async ({ page }) => {
-    // Step 1: Navigate to login page
-    await page.goto(baseURL);
-
-    // Verify login page is displayed
-    await expect(page).toHaveURL(baseURL);
-    await expect(page.getByRole('button', { name: 'Login' })).toBeVisible();
+    const login = new LoginPage(page);
+    await login.goto();
   });
 
-  // Happy Case
-  test('User can login successfully with valid credentials', async ({ page }) => {
+  test("User can login successfully with valid credentials", async ({
+    page,
+  }) => {
+    const login = new LoginPage(page);
 
-    // Step 2: Enter valid username
-    await page.getByPlaceholder('Username').fill(validUsername);
+    await login.login(validUsername, validPassword);
 
-    // Step 3: Enter valid password
-    await page.getByPlaceholder('Password').fill(validPassword);
-
-    // Step 4: Click Login button
-    await page.getByRole('button', { name: 'Login' }).click();
-
-    // Step 5: Verify user redirected to inventory page
     await expect(page).toHaveURL(/inventory/);
-
-    // Step 6: Verify product list is visible
-    await expect(page.getByText('Products')).toBeVisible();
+    await expect(page.locator(".title")).toHaveText("Products");
   });
 
-  // Unhappy Case 1 - Invalid password
-  test('User cannot login with invalid password', async ({ page }) => {
+  // Parameterized negative cases
+  const negativeCases = [
+    {
+      title: "invalid password",
+      username: validUsername,
+      password: "wrong_password",
+      error: "Username and password do not match",
+    },
+    {
+      title: "invalid username",
+      username: "wrong_user",
+      password: validPassword,
+      error: "Username and password do not match",
+    },
+    {
+      title: "empty username",
+      username: "",
+      password: validPassword,
+      error: "Username is required",
+    },
+    {
+      title: "empty password",
+      username: validUsername,
+      password: "",
+      error: "Password is required",
+    },
+    {
+      title: "empty username and password",
+      username: "",
+      password: "",
+      error: "Username is required",
+    },
+  ];
 
-    await page.getByPlaceholder('Username').fill(validUsername);
-    await page.getByPlaceholder('Password').fill(invalidPassword);
+  for (const data of negativeCases) {
+    test(`User cannot login with ${data.title}`, async ({ page }) => {
+      const login = new LoginPage(page);
 
-    await page.getByRole('button', { name: 'Login' }).click();
+      await login.login(data.username, data.password);
+      await login.expectError(data.error);
 
-    await expect(page.getByText(/Username and password do not match/)).toBeVisible();
-    await expect(page).toHaveURL(baseURL);
-  });
-
-  // Unhappy Case 2 - Invalid username
-  test('User cannot login with invalid username', async ({ page }) => {
-
-    await page.getByPlaceholder('Username').fill(invalidUsername);
-    await page.getByPlaceholder('Password').fill(validPassword);
-
-    await page.getByRole('button', { name: 'Login' }).click();
-
-    await expect(page.getByText(/Username and password do not match/)).toBeVisible();
-    await expect(page).toHaveURL(baseURL);
-  });
-
-  // Unhappy Case 3 - Empty username
-  test('User cannot login with empty username', async ({ page }) => {
-
-    await page.getByPlaceholder('Password').fill(validPassword);
-    await page.getByRole('button', { name: 'Login' }).click();
-
-    await expect(page.getByText(/Username is required/)).toBeVisible();
-  });
-
-  // Unhappy Case 4 - Empty password
-  test('User cannot login with empty password', async ({ page }) => {
-
-    await page.getByPlaceholder('Username').fill(validUsername);
-    await page.getByRole('button', { name: 'Login' }).click();
-
-    await expect(page.getByText(/Password is required/)).toBeVisible();
-  });
-
-  // Unhappy Case 5 - Both fields empty
-  test('User cannot login with empty username and password', async ({ page }) => {
-
-    await page.getByRole('button', { name: 'Login' }).click();
-
-    await expect(page.getByText(/Username is required/)).toBeVisible();
-  });
-
+      await expect(page).toHaveURL("/");
+    });
+  }
 });
