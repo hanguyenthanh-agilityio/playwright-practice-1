@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { LoginPage } from "../pages/login.page";
+import { boxedStep } from "../utils/boxed-step";
 
 test.describe("Login Feature - SauceDemo", () => {
   const validUsername = "standard_user";
@@ -7,7 +8,10 @@ test.describe("Login Feature - SauceDemo", () => {
 
   test.beforeEach(async ({ page }) => {
     const login = new LoginPage(page);
-    await login.goto();
+
+    await boxedStep("Navigate to login page", async () => {
+      await login.goto();
+    });
   });
 
   test("User can login successfully with valid credentials", async ({
@@ -15,10 +19,14 @@ test.describe("Login Feature - SauceDemo", () => {
   }) => {
     const login = new LoginPage(page);
 
-    await login.login(validUsername, validPassword);
+    await boxedStep("Login with valid credentials", async () => {
+      await login.login(validUsername, validPassword);
+    });
 
-    await expect(page).toHaveURL(/inventory/);
-    await expect(page.locator(".title")).toHaveText("Products");
+    await boxedStep("Verify user is redirected to inventory page", async () => {
+      await expect(page).toHaveURL(/inventory/);
+      await expect(page.locator(".title")).toHaveText("Products");
+    });
   });
 
   // Parameterized negative cases
@@ -59,10 +67,17 @@ test.describe("Login Feature - SauceDemo", () => {
     test(`User cannot login with ${data.title}`, async ({ page }) => {
       const login = new LoginPage(page);
 
-      await login.login(data.username, data.password);
-      await login.expectError(data.error);
+      await boxedStep(`Attempt login with ${data.title}`, async () => {
+        await login.login(data.username, data.password);
+      });
 
-      await expect(page).toHaveURL("/");
+      await boxedStep("Verify error message is displayed", async () => {
+        await login.expectError(data.error);
+      });
+
+      await boxedStep("Verify user remains on login page", async () => {
+        await expect(page).toHaveURL("/");
+      });
     });
   }
 });
