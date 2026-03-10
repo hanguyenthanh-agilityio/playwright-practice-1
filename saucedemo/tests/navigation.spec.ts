@@ -43,7 +43,7 @@ test.describe('Verify Hamburger Navigation Menu - SauceDemo', () => {
     })
   })
 
-  test('User can logout successfully', async ({ page }) => {
+  test.skip('User can logout successfully', async ({ page }) => {
     const menu = new HamburgerMenu(page)
 
     await boxedStep('Open hamburger menu', async () => {

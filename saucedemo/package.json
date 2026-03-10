@@ -9,7 +9,7 @@
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "test:report": "playwright show-report",
-    "report:build": "npx playwright install chromium && playwright test && rimraf public/playwright-report && cpx \"playwright-report/**/*\" public/playwright-report",
+    "report:build": "npx playwright install chromium && playwright test && rimraf public && mkdir public && cpx \"playwright-report/**/*\" public/playwright-report",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
