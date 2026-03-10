@@ -43,6 +43,7 @@ test.describe('Verify Hamburger Navigation Menu - SauceDemo', () => {
     })
   })
 
+  // eslint-disable-next-line playwright/no-skipped-test
   test.skip('User can logout successfully', async ({ page }) => {
     const menu = new HamburgerMenu(page)
 

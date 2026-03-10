@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, Page } from '@playwright/test'
 import { InventoryPage } from '../pages/inventory.page'
 import { CartPage } from '../pages/cart.page'
 import { CheckoutPage } from '../pages/checkout.page'
@@ -10,7 +10,7 @@ test.describe('Verify Checkout', () => {
     await page.goto('/inventory.html')
   })
 
-  async function addProductAndGoToCheckout(page: any) {
+  async function addProductAndGoToCheckout(page: Page) {
     const inventory = new InventoryPage(page)
     const cart = new CartPage(page)
 

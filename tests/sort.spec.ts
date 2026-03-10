@@ -4,11 +4,10 @@ import { boxedStep } from '../utils/boxed-step'
 
 test.describe('Verify Sort Dropdown', () => {
   test.beforeEach(async ({ page }) => {
-    // user already authenticated -> open inventory page
     await page.goto('/inventory.html')
   })
 
-  async function verifySorted<T>(actual: T[], sorter: (arr: T[]) => T[]) {
+  function verifySorted<T>(actual: T[], sorter: (arr: T[]) => T[]) {
     const expected = sorter([...actual])
     expect(actual).toEqual(expected)
   }
@@ -18,6 +17,8 @@ test.describe('Verify Sort Dropdown', () => {
 
     await boxedStep('Get sort dropdown options', async () => {
       const options = await inventory.sortOptions()
+
+      expect(options).toBeTruthy()
       expect(options.length).toBeGreaterThan(0)
     })
   })
@@ -27,9 +28,11 @@ test.describe('Verify Sort Dropdown', () => {
 
     await boxedStep('Sort by Name (A to Z)', async () => {
       await inventory.sortBy('az')
+
       const names = await inventory.getProductNames()
 
-      await verifySorted(names, (arr) => arr.sort())
+      expect(names.length).toBeGreaterThan(0)
+      verifySorted(names, (arr) => arr.sort())
     })
   })
 
@@ -38,9 +41,11 @@ test.describe('Verify Sort Dropdown', () => {
 
     await boxedStep('Sort by Name (Z to A)', async () => {
       await inventory.sortBy('za')
+
       const names = await inventory.getProductNames()
 
-      await verifySorted(names, (arr) => arr.sort().reverse())
+      expect(names.length).toBeGreaterThan(0)
+      verifySorted(names, (arr) => arr.sort().reverse())
     })
   })
 
@@ -49,9 +54,11 @@ test.describe('Verify Sort Dropdown', () => {
 
     await boxedStep('Sort by Price (low to high)', async () => {
       await inventory.sortBy('lohi')
+
       const prices = await inventory.getProductPrices()
 
-      await verifySorted(prices, (arr) => arr.sort((a, b) => a - b))
+      expect(prices.length).toBeGreaterThan(0)
+      verifySorted(prices, (arr) => arr.sort((a, b) => a - b))
     })
   })
 
@@ -60,9 +67,11 @@ test.describe('Verify Sort Dropdown', () => {
 
     await boxedStep('Sort by Price (high to low)', async () => {
       await inventory.sortBy('hilo')
+
       const prices = await inventory.getProductPrices()
 
-      await verifySorted(prices, (arr) => arr.sort((a, b) => b - a))
+      expect(prices.length).toBeGreaterThan(0)
+      verifySorted(prices, (arr) => arr.sort((a, b) => b - a))
     })
   })
 })
