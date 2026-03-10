@@ -42,4 +42,42 @@ test.describe('Verify Hamburger Navigation Menu - SauceDemo', () => {
       await expect(page).toHaveURL('https://saucelabs.com/')
     })
   })
+
+  test('User can logout successfully', async ({ page }) => {
+    const menu = new HamburgerMenu(page)
+
+    await boxedStep('Open hamburger menu', async () => {
+      await menu.open()
+    })
+
+    await boxedStep('Click Logout', async () => {
+      await menu.clickLogout()
+    })
+
+    await boxedStep('Verify user is logged out', async () => {
+      await expect(page).toHaveURL('/')
+      await expect(page.getByRole('button', { name: 'Login' })).toBeVisible()
+    })
+  })
+
+  test('User can reset application state', async ({ page }) => {
+    const inventory = new InventoryPage(page)
+    const menu = new HamburgerMenu(page)
+
+    await boxedStep('Add product to cart', async () => {
+      await inventory.addFirstProduct()
+      await expect(inventory.cartBadge).toBeVisible()
+    })
+
+    await boxedStep('Reset application state from menu', async () => {
+      await menu.open()
+      await menu.clickReset()
+      await menu.close()
+    })
+
+    await boxedStep('Verify cart is empty after reset', async () => {
+      await inventory.goToCart()
+      await expect(page.locator('.cart_item')).toHaveCount(0)
+    })
+  })
 })
