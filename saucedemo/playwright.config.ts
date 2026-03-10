@@ -15,9 +15,7 @@ export default defineConfig({
 
   timeout: 60 * 1000,
 
-  reporter: [
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
-  ],
+  reporter: [['html', { outputFolder: 'playwright-report', open: 'never' }]],
 
   use: {
     baseURL: 'https://www.saucedemo.com/',
@@ -35,32 +33,53 @@ export default defineConfig({
     },
   },
 
-  projects: [
-    {
-      name: 'setup',
-      testMatch: /.*\.setup\.ts/,
-    },
+  projects: isCI
+    ? [
+        {
+          name: 'setup',
+          testMatch: /.*\.setup\.ts/,
+        },
 
-    {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        storageState: 'playwright/.auth/user.json',
-      },
-      dependencies: ['setup'],
-    },
-
-    ...(isCI
-      ? []
-      : [
-          {
-            name: 'webkit',
-            use: {
-              ...devices['Desktop Safari'],
-              storageState: 'playwright/.auth/user.json',
-            },
-            dependencies: ['setup'],
+        {
+          name: 'chromium',
+          use: {
+            ...devices['Desktop Chrome'],
+            storageState: 'playwright/.auth/user.json',
           },
-        ]),
-  ],
+          dependencies: ['setup'],
+        },
+      ]
+    : [
+        {
+          name: 'setup',
+          testMatch: /.*\.setup\.ts/,
+        },
+
+        {
+          name: 'chromium',
+          use: {
+            ...devices['Desktop Chrome'],
+            storageState: 'playwright/.auth/user.json',
+          },
+          dependencies: ['setup'],
+        },
+
+        // {
+        //   name: 'firefox',
+        //   use: {
+        //     ...devices['Desktop Firefox'],
+        //     storageState: 'playwright/.auth/user.json',
+        //   },
+        //   dependencies: ['setup'],
+        // },
+
+        {
+          name: 'webkit',
+          use: {
+            ...devices['Desktop Safari'],
+            storageState: 'playwright/.auth/user.json',
+          },
+          dependencies: ['setup'],
+        },
+      ],
 })
