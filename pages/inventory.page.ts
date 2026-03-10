@@ -26,21 +26,36 @@ export class InventoryPage {
   }
 
   async addFirstProduct() {
-    await this.inventoryItems.first().getByRole('button', { name: 'Add to cart' }).click()
+    const btn = this.inventoryItems.first().getByRole('button', { name: 'Add to cart' })
+
+    await expect(btn).toBeVisible()
+    await btn.click()
   }
 
   async addMultiple(count: number) {
     for (let i = 0; i < count; i++) {
-      await this.inventoryItems.nth(i).getByRole('button', { name: 'Add to cart' }).click()
+      const btn = this.inventoryItems.nth(i).getByRole('button', { name: 'Add to cart' })
+
+      await expect(btn).toBeVisible()
+      await btn.click()
     }
   }
 
   async removeFirstProduct() {
-    await this.inventoryItems.first().getByRole('button', { name: 'Remove' }).click()
+    const btn = this.inventoryItems.first().getByRole('button', { name: 'Remove' })
+
+    await expect(btn).toBeVisible()
+    await btn.click()
   }
 
   async goToCart() {
-    await Promise.all([this.page.waitForURL(/cart/), this.cartIcon.click()])
+    await expect(this.cartIcon).toBeVisible()
+
+    await this.cartIcon.scrollIntoViewIfNeeded()
+
+    await this.cartIcon.click({ force: true })
+
+    await expect(this.page).toHaveURL(/cart/)
   }
 
   async sortBy(value: string) {

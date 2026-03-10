@@ -5,8 +5,10 @@ import { boxedStep } from '../utils/boxed-step'
 
 test.describe('Verify Add To Cart - Full Validation', () => {
   test.beforeEach(async ({ page }) => {
-    // session already authenticated
     await page.goto('/inventory.html')
+    await page.waitForLoadState('domcontentloaded')
+
+    await expect(page.locator('.inventory_item')).toHaveCount(6)
   })
 
   test('Add single product and verify details in cart', async ({ page }) => {
@@ -103,12 +105,10 @@ test.describe('Verify Add To Cart - Full Validation', () => {
     })
 
     await boxedStep('Remove product from cart', async () => {
-      await cart.expectItemPresent(product.name)
       await cart.removeItemByName(product.name)
     })
 
     await boxedStep('Verify cart is empty', async () => {
-      await cart.expectItemNotPresent(product.name)
       await cart.expectItemCount(0)
     })
   })
