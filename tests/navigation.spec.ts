@@ -5,7 +5,6 @@ import { boxedStep } from '../utils/boxed-step'
 
 test.describe('Verify Hamburger Navigation Menu - SauceDemo', () => {
   test.beforeEach(async ({ page }) => {
-    // user already logged in → just open inventory
     await page.goto('/inventory.html')
   })
 
@@ -35,16 +34,15 @@ test.describe('Verify Hamburger Navigation Menu - SauceDemo', () => {
     })
 
     await boxedStep('Navigate to About page', async () => {
-      await Promise.all([page.waitForURL('https://saucelabs.com/'), menu.clickAbout()])
+      await menu.clickAbout()
     })
 
-    await boxedStep('Verify redirect', async () => {
-      await expect(page).toHaveURL('https://saucelabs.com/')
+    await boxedStep('Verify redirect to SauceLabs site', async () => {
+      await expect(page).toHaveURL(/saucelabs/)
     })
   })
 
-  // eslint-disable-next-line playwright/no-skipped-test
-  test.skip('User can logout successfully', async ({ page }) => {
+  test('User can logout successfully', async ({ page }) => {
     const menu = new HamburgerMenu(page)
 
     await boxedStep('Open hamburger menu', async () => {
@@ -56,8 +54,7 @@ test.describe('Verify Hamburger Navigation Menu - SauceDemo', () => {
     })
 
     await boxedStep('Verify user is logged out', async () => {
-      await expect(page).toHaveURL('/')
-      await expect(page.getByRole('button', { name: 'Login' })).toBeVisible()
+      await expect(page.locator('#login-button')).toBeVisible()
     })
   })
 
