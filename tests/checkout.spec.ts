@@ -4,7 +4,7 @@ import { CartPage } from '../pages/cart.page'
 import { CheckoutPage } from '../pages/checkout.page'
 import { boxedStep } from '../utils/boxed-step'
 
-test.describe('Verify Checkout', () => {
+test.describe('Verify Checkout', { tag: '@checkout' }, () => {
   test.beforeEach(async ({ page }) => {
     // user already authenticated -> open inventory page
     await page.goto('/inventory.html')
@@ -47,7 +47,7 @@ test.describe('Verify Checkout', () => {
     })
   })
 
-  test('Complete checkout successfully', async ({ page }) => {
+  test('Complete checkout successfully', { tag: ['@smoke', '@regression'] }, async ({ page }) => {
     const checkout = new CheckoutPage(page)
 
     await addProductAndGoToCheckout(page)
@@ -110,7 +110,7 @@ test.describe('Verify Checkout', () => {
   ]
 
   for (const data of validationCases) {
-    test(data.title, async ({ page }) => {
+    test(data.title, { tag: '@negative' }, async ({ page }) => {
       const checkout = new CheckoutPage(page)
 
       await addProductAndGoToCheckout(page)

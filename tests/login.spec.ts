@@ -5,7 +5,7 @@ import { boxedStep } from '../utils/boxed-step'
 // Disable reused login session for login tests
 test.use({ storageState: undefined })
 
-test.describe('Login Feature - SauceDemo', () => {
+test.describe('Login Feature - SauceDemo', { tag: '@login' }, () => {
   const validUsername = 'standard_user'
   const validPassword = 'secret_sauce'
 
@@ -17,18 +17,22 @@ test.describe('Login Feature - SauceDemo', () => {
     })
   })
 
-  test('User can login successfully with valid credentials', async ({ page }) => {
-    const login = new LoginPage(page)
+  test(
+    'User can login successfully with valid credentials',
+    { tag: ['@smoke', '@regression'] },
+    async ({ page }) => {
+      const login = new LoginPage(page)
 
-    await boxedStep('Login with valid credentials', async () => {
-      await login.login(validUsername, validPassword)
-    })
+      await boxedStep('Login with valid credentials', async () => {
+        await login.login(validUsername, validPassword)
+      })
 
-    await boxedStep('Verify user is redirected to inventory page', async () => {
-      await expect(page).toHaveURL(/inventory/)
-      await expect(page.locator('.title')).toHaveText('Products')
-    })
-  })
+      await boxedStep('Verify user is redirected to inventory page', async () => {
+        await expect(page).toHaveURL(/inventory/)
+        await expect(page.locator('.title')).toHaveText('Products')
+      })
+    },
+  )
 
   // Negative test cases
   const negativeCases = [
@@ -65,7 +69,7 @@ test.describe('Login Feature - SauceDemo', () => {
   ]
 
   for (const data of negativeCases) {
-    test(`User cannot login with ${data.title}`, async ({ page }) => {
+    test(`User cannot login with ${data.title}`, { tag: '@negative' }, async ({ page }) => {
       const login = new LoginPage(page)
 
       await boxedStep(`Attempt login with ${data.title}`, async () => {

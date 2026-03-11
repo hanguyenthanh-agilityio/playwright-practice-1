@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import { InventoryPage } from '../pages/inventory.page'
 import { boxedStep } from '../utils/boxed-step'
 
-test.describe('Verify Sort Dropdown', () => {
+test.describe('Verify Sort Dropdown', { tag: '@sort' }, () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/inventory.html')
   })
@@ -23,7 +23,7 @@ test.describe('Verify Sort Dropdown', () => {
     })
   })
 
-  test('Sort by Name (A to Z)', async ({ page }) => {
+  test('Sort by Name (A to Z)', { tag: '@regression' }, async ({ page }) => {
     const inventory = new InventoryPage(page)
 
     await boxedStep('Sort by Name (A to Z)', async () => {
@@ -36,7 +36,7 @@ test.describe('Verify Sort Dropdown', () => {
     })
   })
 
-  test('Sort by Name (Z to A)', async ({ page }) => {
+  test('Sort by Name (Z to A)', { tag: '@regression' }, async ({ page }) => {
     const inventory = new InventoryPage(page)
 
     await boxedStep('Sort by Name (Z to A)', async () => {
@@ -49,7 +49,7 @@ test.describe('Verify Sort Dropdown', () => {
     })
   })
 
-  test('Sort by Price (low to high)', async ({ page }) => {
+  test('Sort by Price (low to high)', { tag: '@regression' }, async ({ page }) => {
     const inventory = new InventoryPage(page)
 
     await boxedStep('Sort by Price (low to high)', async () => {
@@ -62,7 +62,7 @@ test.describe('Verify Sort Dropdown', () => {
     })
   })
 
-  test('Sort by Price (high to low)', async ({ page }) => {
+  test('Sort by Price (high to low)', { tag: '@regression' }, async ({ page }) => {
     const inventory = new InventoryPage(page)
 
     await boxedStep('Sort by Price (high to low)', async () => {

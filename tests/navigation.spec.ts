@@ -3,12 +3,12 @@ import { InventoryPage } from '../pages/inventory.page'
 import { HamburgerMenu } from '../pages/components/hamburger.menu'
 import { boxedStep } from '../utils/boxed-step'
 
-test.describe('Verify Hamburger Navigation Menu - SauceDemo', () => {
+test.describe('Verify Hamburger Navigation Menu - SauceDemo', { tag: '@navigation' }, () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/inventory.html')
   })
 
-  test('User can navigate to All Items page', async ({ page }) => {
+  test('User can navigate to All Items page', { tag: '@regression' }, async ({ page }) => {
     const inventory = new InventoryPage(page)
     const menu = new HamburgerMenu(page)
 
@@ -26,7 +26,7 @@ test.describe('Verify Hamburger Navigation Menu - SauceDemo', () => {
     })
   })
 
-  test('User can navigate to About page', async ({ page }) => {
+  test('User can navigate to About page', { tag: '@regression' }, async ({ page }) => {
     const menu = new HamburgerMenu(page)
 
     await boxedStep('Open hamburger menu', async () => {
@@ -42,7 +42,7 @@ test.describe('Verify Hamburger Navigation Menu - SauceDemo', () => {
     })
   })
 
-  test('User can logout successfully', async ({ page }) => {
+  test('User can logout successfully', { tag: ['@smoke', '@regression'] }, async ({ page }) => {
     const menu = new HamburgerMenu(page)
 
     await boxedStep('Open hamburger menu', async () => {
@@ -58,7 +58,7 @@ test.describe('Verify Hamburger Navigation Menu - SauceDemo', () => {
     })
   })
 
-  test('User can reset application state', async ({ page }) => {
+  test('User can reset application state', { tag: '@regression' }, async ({ page }) => {
     const inventory = new InventoryPage(page)
     const menu = new HamburgerMenu(page)
 
